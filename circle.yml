@@ -9,7 +9,7 @@ dependencies:
     - "project/target/resolution-cache"
     - "project/target/streams"
   override:
-    - ./sbt compile
+    - sbt compile
 test:
   override:
-    - ./sbt test
+    - sbt test
