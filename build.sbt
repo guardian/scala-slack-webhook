@@ -4,6 +4,10 @@ organization := "com.guardian"
 
 scalaVersion := "2.11.8"
 
+resolvers ++= Seq(
+  "typesafe-repo" at "http://repo.typesafe.com/typesafe/releases/"
+)
+
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.1" % "test",
   "com.typesafe.play" %% "play-json" % "2.3.4",
