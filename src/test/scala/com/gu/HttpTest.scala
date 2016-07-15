@@ -16,8 +16,7 @@ class HttpTest extends FlatSpec with Matchers with Http with Eventually {
 
   def timestamp = DateTime.now.toString(DateTimeFormat.forPattern("yyyyMMddHHmmss"))
 
-  "Sending a text post" should "return a 200" in {
-
+  "Sending a text post" should "post successfully to the default channels in Slack" in {
     val testPostText = s"Test post - text test $timestamp"
 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(testPostText))
@@ -28,8 +27,7 @@ class HttpTest extends FlatSpec with Matchers with Http with Eventually {
     }
   }
 
-  "Send a post with channel" should "return a 200" in {
-
+  "Send a post with channel" should "post successfully to the right channel Slack" in {
     val testPostText = s"Test post - channel test $timestamp"
 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(testPostText).withChannel("random"))
@@ -40,19 +38,36 @@ class HttpTest extends FlatSpec with Matchers with Http with Eventually {
     }
   }
 
-  "Send a post with username" should "return a 200" in {
-    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - username test $timestamp").withUsername("Test User"))
+  "Send a post with username" should "post successfully with the correct username in Slack" in {
+    val testUserName = "Test User"
+
+    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - username test $timestamp").withUsername(testUserName))
     response.responseCode should be (200)
+
+    eventually {
+      SlackApiChannels.getLatestMessageUsername(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (testUserName)
+    }
   }
 
   "Send a post with iconUrl" should "return a 200" in {
-    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post -icon url test $timestamp").withUsername("Icon test").withIconUrl("https://cdn3.iconfinder.com/data/icons/ikooni-outline-file-folders/128/files-03-128.png"))
+    val testIconUrl = "https://cdn3.iconfinder.com/data/icons/ikooni-outline-file-folders/128/files-03-128.png"
+
+    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post -icon url test $timestamp").withUsername("Icon test").withIconUrl(testIconUrl))
     response.responseCode should be (200)
+
+    eventually {
+      SlackApiChannels.getLatestMessageIconUrl(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (testIconUrl) //TODO: Fix this test
+    }
   }
 
   "Send a post with iconEmoji" should "return a 200" in {
+    val testIconEmoji = ":monkey_face:"
+
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - icon emoji test $timestamp").withUsername("Emoji test")withIconEmoji(":monkey_face:"))
     response.responseCode should be (200)
-  }
 
+    eventually {
+      SlackApiChannels.getLatestMessageIconEmoji(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (testIconEmoji)
+    }
+  }
 }
