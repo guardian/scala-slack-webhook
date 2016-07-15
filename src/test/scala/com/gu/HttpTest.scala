@@ -49,7 +49,7 @@ class HttpTest extends FlatSpec with Matchers with Http with Eventually {
     }
   }
 
-  "Send a post with iconUrl" should "return a 200" in {
+  "Send a post with iconUrl" should "post successfully to Slack with the correct icon" in {
     val testIconUrl = "https://cdn3.iconfinder.com/data/icons/ikooni-outline-file-folders/128/files-03-128.png"
 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post -icon url test $timestamp").withUsername("Icon test").withIconUrl(testIconUrl))
@@ -60,7 +60,7 @@ class HttpTest extends FlatSpec with Matchers with Http with Eventually {
     }
   }
 
-  "Send a post with iconEmoji" should "return a 200" in {
+  "Send a post with iconEmoji" should "post successfully to Slack with the correct icon" in {
     val testIconEmoji = ":monkey_face:"
 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - icon emoji test $timestamp").withUsername("Emoji test")withIconEmoji(":monkey_face:"))
