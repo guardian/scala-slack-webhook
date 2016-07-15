@@ -17,15 +17,15 @@ class SlackIncomingWebHook(url: String) extends Http {
 
 trait Http {
 
+  val client = HttpClients.createDefault()
+
   def POST(url: String, payload: JsValue): HttpResponse = {
-    val client = HttpClients.createDefault()
     val post = new HttpPost(url)
 
     post.setHeader("Content-type", "application/x-www-form-urlencoded")
     post.setEntity(new StringEntity(s"payload=${payload.toString}"))
 
-    val response = client.execute(post)
-    new HttpResponse(response)
+    new HttpResponse(client.execute(post))
   }
 }
 
