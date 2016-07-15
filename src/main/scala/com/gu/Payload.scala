@@ -2,10 +2,16 @@ package com.gu
 
 import play.api.libs.json.Json
 
-case class Payload(text: String, channel: Option[String] = None, username: Option[String] = None, iconUrl: Option[String] = None)
+case class Payload(text: String, channel: Option[String] = None, username: Option[String] = None, icon_url: Option[String] = None, icon_emoji: Option[String] = None) {
+
+  def withChannel(channel: String) = this.copy(channel = Some(channel))
+  def withUsername(username: String) = this.copy(username = Some(username))
+  def withIconUrl(icon_url: String) = this.copy(icon_url = Some(icon_url))
+  def withIconEmoji(icon_emoji: String) = this.copy(icon_emoji = Some(icon_emoji))
+}
 
 object Payload {
 
-  implicit val jf = Json.format[Payload]
+  implicit val jw = Json.writes[Payload]
 
 }
