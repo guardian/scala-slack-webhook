@@ -1,24 +1,43 @@
 package com.gu
 
+import com.gu.apis.SlackApiChannels
 import com.gu.services.TestConfig
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import org.scalatest.concurrent.Eventually
+import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{FlatSpec, Matchers}
 
-class HttpTest extends FlatSpec with Matchers with Http {
+class HttpTest extends FlatSpec with Matchers with Http with Eventually {
+
+  override implicit val patienceConfig = PatienceConfig(timeout = scaled(Span(10, Seconds)), interval = scaled(Span(1, Seconds)))
 
   val config = TestConfig
 
   def timestamp = DateTime.now.toString(DateTimeFormat.forPattern("yyyyMMddHHmmss"))
 
   "Sending a text post" should "return a 200" in {
-    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - text test $timestamp"))
+
+    val testPostText = s"Test post - text test $timestamp"
+
+    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(testPostText))
     response.responseCode should be (200)
+
+    eventually {
+      SlackApiChannels.getLatestMessageText(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (testPostText)
+    }
   }
 
   "Send a post with channel" should "return a 200" in {
-    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - channel test $timestamp").withChannel("random"))
+
+    val testPostText = s"Test post - channel test $timestamp"
+
+    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(testPostText).withChannel("random"))
     response.responseCode should be (200)
+
+    eventually {
+      SlackApiChannels.getLatestMessageText(SlackApiChannels.getChannelHistoryJson(config.slackRandomChannelId)) should be (testPostText)
+    }
   }
 
   "Send a post with username" should "return a 200" in {
