@@ -14,7 +14,3 @@ libraryDependencies ++= Seq(
   "org.apache.httpcomponents" % "httpclient" % "4.3.4",
   "com.typesafe" % "config" % "1.3.0"
 )
-
-bintraySettings
-
-com.typesafe.sbt.SbtGit.versionWithGit
