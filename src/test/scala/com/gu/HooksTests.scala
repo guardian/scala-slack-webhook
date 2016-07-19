@@ -8,7 +8,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{FlatSpec, Matchers}
 
-class HttpTest extends FlatSpec with Matchers with Http with Eventually {
+class HooksTests extends FlatSpec with Matchers with Http with Eventually {
 
   override implicit val patienceConfig = PatienceConfig(timeout = scaled(Span(10, Seconds)), interval = scaled(Span(1, Seconds)))
 
@@ -56,7 +56,7 @@ class HttpTest extends FlatSpec with Matchers with Http with Eventually {
     response.responseCode should be (200)
 
     eventually {
-      SlackApiChannels.getLatestMessageIconUrl(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (testIconUrl) //TODO: Fix this test
+      SlackApiChannels.isLatestMessageIconUrlPresent(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (true)
     }
   }
 

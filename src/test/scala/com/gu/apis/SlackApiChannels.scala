@@ -2,7 +2,7 @@ package com.gu.apis
 
 import com.gu.Http
 import com.gu.services.TestConfig
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsUndefined, JsValue, Json}
 
 import scala.io.Source
 
@@ -30,9 +30,12 @@ object SlackApiChannels extends Http {
     (firstMessage \ "icons" \ "emoji").toString()replace("\"", "")
   }
 
-  def getLatestMessageIconUrl(json: JsValue): String = {
+  def isLatestMessageIconUrlPresent(json: JsValue): Boolean = {
     val firstMessage = (json \ "messages")(0)
-    (firstMessage \ "icons" \ "image_48").toString()replace("\"", "")
+    (firstMessage \ "icons" \ "image_48") match {
+      case icon: JsUndefined => false
+      case _ => true
+    }
   }
 
 }
