@@ -8,7 +8,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{FlatSpec, Matchers}
 
-class HooksTests extends FlatSpec with Matchers with Http with Eventually {
+class IntegrationTests extends FlatSpec with Matchers with Http with Eventually {
 
   override implicit val patienceConfig = PatienceConfig(timeout = scaled(Span(10, Seconds)), interval = scaled(Span(1, Seconds)))
 
