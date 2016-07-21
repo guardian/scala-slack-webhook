@@ -6,32 +6,27 @@ import play.api.libs.json.{JsUndefined, JsValue, Json}
 
 import scala.io.Source
 
-object SlackApiChannels extends Http {
+case class SlackApiChannels(channel: String) {
 
   val config = TestConfig
   val slackChannelHistoryUrl: String = "https://slack.com/api/channels.history"
 
-  def getChannelHistoryJson(channel: String): JsValue = {
-    Json.parse(Source.fromURL(s"$slackChannelHistoryUrl?token=${config.slackApiToken}&channel=$channel").mkString)
-  }
+  val channelHistoryJson: JsValue = Json.parse(Source.fromURL(s"$slackChannelHistoryUrl?token=${config.slackApiToken}&channel=$channel").mkString)
+  val firstMessage: JsValue = (channelHistoryJson \ "messages")(0)
 
-  def getLatestMessageText(json: JsValue): String = {
-    val firstMessage = (json \ "messages")(0)
+  def getLatestMessageText(): String = {
     (firstMessage \ "text").toString().replace("\"", "")
   }
 
-  def getLatestMessageUsername(json: JsValue): String = {
-    val firstMessage = (json \ "messages")(0)
+  def getLatestMessageUsername(): String = {
     (firstMessage \ "username").toString()replace("\"", "")
   }
 
-  def getLatestMessageIconEmoji(json: JsValue): String = {
-    val firstMessage = (json \ "messages")(0)
+  def getLatestMessageIconEmoji(): String = {
     (firstMessage \ "icons" \ "emoji").toString()replace("\"", "")
   }
 
-  def isLatestMessageIconUrlPresent(json: JsValue): Boolean = {
-    val firstMessage = (json \ "messages")(0)
+  def isLatestMessageIconUrlPresent(): Boolean = {
     (firstMessage \ "icons" \ "image_48") match {
       case icon: JsUndefined => false
       case _ => true

@@ -7,12 +7,15 @@ import org.joda.time.format.DateTimeFormat
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{FlatSpec, Matchers}
+import play.api.libs.json.Json
 
 class IntegrationTests extends FlatSpec with Matchers with Http with Eventually {
 
   override implicit val patienceConfig = PatienceConfig(timeout = scaled(Span(10, Seconds)), interval = scaled(Span(1, Seconds)))
 
   val config = TestConfig
+  val generalChannel = config.slackGeneralChannelId
+  val randomChannel = config.slackRandomChannelId
 
   def timestamp = DateTime.now.toString(DateTimeFormat.forPattern("yyyyMMddHHmmss"))
 
@@ -23,7 +26,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     response.responseCode should be (200)
 
     eventually {
-      SlackApiChannels.getLatestMessageText(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (testPostText)
+      SlackApiChannels(generalChannel).getLatestMessageText() should be (testPostText)
     }
   }
 
@@ -34,7 +37,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     response.responseCode should be (200)
 
     eventually {
-      SlackApiChannels.getLatestMessageText(SlackApiChannels.getChannelHistoryJson(config.slackRandomChannelId)) should be (testPostText)
+      SlackApiChannels(randomChannel).getLatestMessageText() should be (testPostText)
     }
   }
 
@@ -45,7 +48,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     response.responseCode should be (200)
 
     eventually {
-      SlackApiChannels.getLatestMessageUsername(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (testUserName)
+      SlackApiChannels(generalChannel).getLatestMessageUsername() should be (testUserName)
     }
   }
 
@@ -56,7 +59,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     response.responseCode should be (200)
 
     eventually {
-      SlackApiChannels.isLatestMessageIconUrlPresent(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (true)
+      SlackApiChannels(generalChannel).isLatestMessageIconUrlPresent() should be (true)
     }
   }
 
@@ -67,7 +70,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     response.responseCode should be (200)
 
     eventually {
-      SlackApiChannels.getLatestMessageIconEmoji(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (testIconEmoji)
+      SlackApiChannels(generalChannel).getLatestMessageIconEmoji() should be (testIconEmoji)
     }
   }
 
