@@ -21,7 +21,16 @@ case class Attachment(
   color: Option[String] = None,
   pretext: Option[String] = None,
   author_parameters: Option[Author] = None
-)
+) {
+
+  def withFields(fields: Seq[Field]) = this.copy(fields = Some(fields))
+  def withImageUrl(image_url: String) = this.copy(image_url = Some(image_url))
+  def withThumbUrl(thumb_url: String) = this.copy(thumb_url = Some(thumb_url))
+  def withTitleLink(title_link: String) = this.copy(title_link = Some(title_link))
+  def withColor(color: String) = this.copy(color = Some(color))
+  def withPretext(pretext: String) = this.copy(pretext = Some(pretext))
+  def withAuthorParameters(author: Author) = this.copy(author_parameters = Some(author))
+}
 
 object Attachment { implicit val attachmentWrites = Json.writes[Attachment] }
 
