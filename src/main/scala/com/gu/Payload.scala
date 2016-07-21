@@ -10,15 +10,11 @@ case class Field(title: String, value: String, short: Option[String] = None)
 
 object Field { implicit val fieldWrites = Json.writes[Field] }
 
-case class Fields(fields: Seq[Field])
-
-object Fields { implicit val fieldsWrites = Json.writes[Fields] }
-
 case class Attachment(
   title: String,
   text: String,
   fallback: String,
-  fields: Option[Fields] = None,
+  fields: Option[Seq[Field]] = None,
   image_url: Option[String] = None,
   thumb_url: Option[String] = None,
   title_link: Option[String] = None,
@@ -29,24 +25,20 @@ case class Attachment(
 
 object Attachment { implicit val attachmentWrites = Json.writes[Attachment] }
 
-case class Attachments(attachment: Seq[Attachment])
-
-object Attachments { implicit val attachmentsWrites = Json.writes[Attachments] }
-
 case class Payload(
   text: String,
   channel: Option[String] = None,
   username: Option[String] = None,
   icon_url: Option[String] = None,
   icon_emoji: Option[String] = None,
-  attachments: Option[Attachments] = None
+  attachments: Option[Seq[Attachment]] = None
 ) {
 
   def withChannel(channel: String) = this.copy(channel = Some(channel))
   def withUsername(username: String) = this.copy(username = Some(username))
   def withIconUrl(icon_url: String) = this.copy(icon_url = Some(icon_url))
   def withIconEmoji(icon_emoji: String) = this.copy(icon_emoji = Some(icon_emoji))
-  def withAttachment(attachments: Attachments) = this.copy(attachments = Some(attachments))
+  def withAttachment(attachments: Seq[Attachment]) = this.copy(attachments = Some(attachments))
 }
 
 object Payload { implicit val payloadWrites = Json.writes[Payload] }
