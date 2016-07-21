@@ -70,4 +70,8 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
       SlackApiChannels.getLatestMessageIconEmoji(SlackApiChannels.getChannelHistoryJson(config.slackGeneralChannelId)) should be (testIconEmoji)
     }
   }
+
+  "Send a post with a simple attachment" should "post successfully to Slack" in {
+    val attachment = new Attachment()
+  }
 }
