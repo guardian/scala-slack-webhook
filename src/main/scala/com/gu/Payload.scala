@@ -24,6 +24,7 @@ case class Attachment(
 ) {
 
   def withFields(fields: Seq[Field]) = this.copy(fields = Some(fields))
+  def withField(field: Field) = this.copy(fields = Some(Seq(field)))
   def withImageUrl(image_url: String) = this.copy(image_url = Some(image_url))
   def withThumbUrl(thumb_url: String) = this.copy(thumb_url = Some(thumb_url))
   def withTitleLink(title_link: String) = this.copy(title_link = Some(title_link))
@@ -47,7 +48,8 @@ case class Payload(
   def withUsername(username: String) = this.copy(username = Some(username))
   def withIconUrl(icon_url: String) = this.copy(icon_url = Some(icon_url))
   def withIconEmoji(icon_emoji: String) = this.copy(icon_emoji = Some(icon_emoji))
-  def withAttachment(attachments: Seq[Attachment]) = this.copy(attachments = Some(attachments))
+  def withAttachment(attachment: Attachment) = this.copy(attachments = Some(Seq(attachment)))
+  def withAttachments(attachments: Seq[Attachment]) = this.copy(attachments = Some(attachments))
 }
 
 object Payload { implicit val payloadWrites = Json.writes[Payload] }

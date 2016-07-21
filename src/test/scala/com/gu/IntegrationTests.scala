@@ -76,7 +76,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
   "Send a post with a simple attachment" should "post successfully to Slack" in {
     val attachment = new Attachment(s"Test attachment $timestamp", "This is a test attachment", "Fallback text")
 
-    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - simple attachment test $timestamp").withAttachment(Seq(attachment)))
+    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - simple attachment test $timestamp").withAttachment(attachment))
     response.responseCode should be (200)
 
     val channelApi = SlackApiChannels(generalChannel)
