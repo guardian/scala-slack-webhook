@@ -19,9 +19,9 @@ case class Attachment(
   text: String,
   fallback: String,
   fields: Option[Fields] = None,
-  image_url: Option[String],
-  thumb_url: Option[String],
-  title_link: Option[String],
+  image_url: Option[String] = None,
+  thumb_url: Option[String] = None,
+  title_link: Option[String] = None,
   color: Option[String] = None,
   pretext: Option[String] = None,
   author_parameters: Option[Author] = None
