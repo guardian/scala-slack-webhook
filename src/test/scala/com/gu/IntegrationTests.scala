@@ -7,7 +7,6 @@ import org.joda.time.format.DateTimeFormat
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{FlatSpec, Matchers}
-import play.api.libs.json.Json
 
 class IntegrationTests extends FlatSpec with Matchers with Http with Eventually {
 
@@ -26,7 +25,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     response.responseCode should be (200)
 
     eventually {
-      SlackApiChannels(generalChannel).getLatestMessageText() should be (testPostText)
+      SlackApiChannels(generalChannel).latestMessageText should be (testPostText)
     }
   }
 
@@ -37,7 +36,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     response.responseCode should be (200)
 
     eventually {
-      SlackApiChannels(randomChannel).getLatestMessageText() should be (testPostText)
+      SlackApiChannels(randomChannel).latestMessageText should be (testPostText)
     }
   }
 
@@ -48,7 +47,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     response.responseCode should be (200)
 
     eventually {
-      SlackApiChannels(generalChannel).getLatestMessageUsername() should be (testUserName)
+      SlackApiChannels(generalChannel).latestMessageUsename should be (testUserName)
     }
   }
 
@@ -70,7 +69,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     response.responseCode should be (200)
 
     eventually {
-      SlackApiChannels(generalChannel).getLatestMessageIconEmoji() should be (testIconEmoji)
+      SlackApiChannels(generalChannel).latestMessageIconEmoji should be (testIconEmoji)
     }
   }
 
@@ -79,5 +78,14 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - simple attachment test $timestamp").withAttachment(Seq(attachment)))
     response.responseCode should be (200)
+
+    val channelApi = SlackApiChannels(generalChannel)
+
+    List(
+      attachment.title -> channelApi.firstAttachmentTitle,
+      attachment.text -> channelApi.firstAttachmentText,
+      attachment.fallback -> channelApi.firstAttachmentFallback).foreach { e =>
+      e._1 should be (e._2)
+    }
   }
 }
