@@ -2,11 +2,7 @@ package com.gu
 
 import play.api.libs.json.Json
 
-case class Author(author_name: String, author_link: String, author_icon: String)
-
-object Author { implicit val authorWrites = Json.writes[Author] }
-
-case class Field(title: String, value: String, short: Option[String] = None)
+case class Field(title: String, value: String, short: Boolean = false)
 
 object Field { implicit val fieldWrites = Json.writes[Field] }
 
@@ -20,7 +16,9 @@ case class Attachment(
   title_link: Option[String] = None,
   color: Option[String] = None,
   pretext: Option[String] = None,
-  author_parameters: Option[Author] = None
+  author_name: Option[String] = None,
+  author_link: Option[String] = None,
+  author_icon: Option[String] = None
 ) {
 
   def withFields(fields: Seq[Field]) = this.copy(fields = Some(fields))
@@ -30,7 +28,9 @@ case class Attachment(
   def withTitleLink(title_link: String) = this.copy(title_link = Some(title_link))
   def withColor(color: String) = this.copy(color = Some(color))
   def withPretext(pretext: String) = this.copy(pretext = Some(pretext))
-  def withAuthorParameters(author: Author) = this.copy(author_parameters = Some(author))
+  def withAuthorName(author_name: String) = this.copy(author_name = Some(author_name))
+  def withAuthorLink(author_link: String) = this.copy(author_link = Some(author_link))
+  def withAuthorIcon(author_icon: String) = this.copy(author_icon = Some(author_icon))
 }
 
 object Attachment { implicit val attachmentWrites = Json.writes[Attachment] }
