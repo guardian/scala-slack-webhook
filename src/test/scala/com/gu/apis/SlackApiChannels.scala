@@ -23,6 +23,9 @@ case class SlackApiChannels(channel: String) {
   lazy val firstAttachmentTitle = getJsonAttribute(latestMessageFirstAttachment, "title")
   lazy val firstAttachmentText = getJsonAttribute(latestMessageFirstAttachment, "text")
   lazy val firstAttachmentFallback = getJsonAttribute(latestMessageFirstAttachment, "fallback")
+  lazy val firstAttachmentPretext = getJsonAttribute(latestMessageFirstAttachment, "pretext")
+  lazy val firstAttachmentColor = getJsonAttribute(latestMessageFirstAttachment, "color")
+  lazy val firstAttachmentThumbUrl = getJsonAttribute(latestMessageFirstAttachment, "thumb_url")
 
   lazy val firstAttachmentAuthorName = getJsonAttribute(latestMessageFirstAttachment, "author_name")
   lazy val firstAttachmentAuthorLink = getJsonAttribute(latestMessageFirstAttachment, "author_link")
