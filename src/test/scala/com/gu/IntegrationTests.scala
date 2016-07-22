@@ -24,9 +24,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(testPostText))
     response.responseCode should be (200)
 
-    eventually {
-      SlackApiChannels(generalChannel).latestMessageText should be (testPostText)
-    }
+    SlackApiChannels(generalChannel).latestMessageText should be (testPostText)
   }
 
   "Send a post with channel" should "post successfully to the right channel Slack" in {
@@ -35,9 +33,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(testPostText).withChannel("random"))
     response.responseCode should be (200)
 
-    eventually {
-      SlackApiChannels(randomChannel).latestMessageText should be (testPostText)
-    }
+    SlackApiChannels(randomChannel).latestMessageText should be (testPostText)
   }
 
   "Send a post with username" should "post successfully with the correct username in Slack" in {
@@ -46,9 +42,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - username test $timestamp").withUsername(testUserName))
     response.responseCode should be (200)
 
-    eventually {
-      SlackApiChannels(generalChannel).latestMessageUsename should be (testUserName)
-    }
+    SlackApiChannels(generalChannel).latestMessageUsername should be (testUserName)
   }
 
   "Send a post with iconUrl" should "post successfully to Slack with the correct icon" in {
@@ -57,9 +51,7 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post -icon url test $timestamp").withUsername("Icon test").withIconUrl(testIconUrl))
     response.responseCode should be (200)
 
-    eventually {
-      SlackApiChannels(generalChannel).isLatestMessageIconUrlPresent() should be (true)
-    }
+    SlackApiChannels(generalChannel).isLatestMessageIconUrlPresent() should be (true)
   }
 
   "Send a post with iconEmoji" should "post successfully to Slack with the correct icon" in {
@@ -68,13 +60,15 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - icon emoji test $timestamp").withUsername("Emoji test")withIconEmoji(":monkey_face:"))
     response.responseCode should be (200)
 
-    eventually {
-      SlackApiChannels(generalChannel).latestMessageIconEmoji should be (testIconEmoji)
-    }
+    SlackApiChannels(generalChannel).latestMessageIconEmoji should be (testIconEmoji)
   }
 
   "Send a post with a simple attachment" should "post successfully to Slack" in {
-    val attachment = new Attachment(s"Test attachment $timestamp", "This is a test attachment", "Fallback text")
+    val attachment = Attachment(
+      s"Test attachment $timestamp",
+      "This is a test attachment",
+      "Fallback text"
+    )
 
     val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - simple attachment test $timestamp").withAttachment(attachment))
     response.responseCode should be (200)
@@ -84,7 +78,51 @@ class IntegrationTests extends FlatSpec with Matchers with Http with Eventually 
     List(
       attachment.title -> channelApi.firstAttachmentTitle,
       attachment.text -> channelApi.firstAttachmentText,
-      attachment.fallback -> channelApi.firstAttachmentFallback).foreach { e =>
+      attachment.fallback -> channelApi.firstAttachmentFallback
+    ).foreach { e =>
+      e._1 should be (e._2)
+    }
+  }
+
+  "Send a post with a field attachment" should "post successfully to Slack" in {
+    val field = Field("Title = test", "Value = test", true)
+    val attachment = Attachment(
+      s"Test attachment $timestamp",
+      "This is a test attachment",
+      "Fallback text"
+    ).withField(field)
+
+    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - field attachment test $timestamp").withAttachment(attachment))
+    response.responseCode should be (200)
+
+    val channelApi = SlackApiChannels(generalChannel)
+
+    List(
+      field.title -> channelApi.firstFieldTitle,
+      field.value -> channelApi.firstFieldValue,
+      field.short -> channelApi.firstFieldShort
+    ).foreach { e =>
+      e._1 should be (e._2)
+    }
+  }
+
+  "Send a post with an authored attachment" should "post successfully to Slack" in {
+    val attachment = Attachment(
+      s"Test attachment $timestamp",
+      "This is a test attachment",
+      "Fallback text"
+    ).withAuthorName(s"Test author $timestamp").withAuthorLink("http://www.google.co.uk").withAuthorIcon("https://image.freepik.com/free-icon/male-user-shadow_318-34042.png")
+
+    val response = new SlackIncomingWebHook(config.testWebHookUrl).send(Payload(s"Test post - authored attachment test $timestamp").withAttachment(attachment))
+    response.responseCode should be (200)
+
+    val channelApi = SlackApiChannels(generalChannel)
+
+    List(
+      attachment.author_name.get -> channelApi.firstAttachmentAuthorName,
+      attachment.author_icon.get -> channelApi.firstAttachmentAuthorIcon,
+      attachment.author_link.get -> channelApi.firstAttachmentAuthorLink
+    ).foreach { e =>
       e._1 should be (e._2)
     }
   }
