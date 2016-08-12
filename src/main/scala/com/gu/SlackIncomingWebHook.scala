@@ -4,7 +4,6 @@ import org.apache.http.client.methods.{CloseableHttpResponse, HttpPost}
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
 import play.api.libs.json.{JsValue, Json}
-
 import scala.io.Source
 
 class SlackIncomingWebHook(url: String) extends Http {
