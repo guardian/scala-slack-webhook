@@ -29,7 +29,7 @@ You must already have a created a custom incoming webhook integration for your S
 Then in your codebase, instantiate a new webhook:
 
 ```scala
-new SlackIncomingWebHook("<your webhook url>")
+val slack = new SlackIncomingWebHook("<your webhook url>")
 ```
 
 Create a payload for your post:
@@ -45,6 +45,12 @@ val payload = Payload("<your message text here>").withChannel("your channel here
 ```
 
 Optional parameters are channel, iconUrl, iconEmoji and Attachments. The Payload has a 'with...' extension for each parameter
+
+Then to send:
+
+```scala
+slack.send(payload)
+```
 
 Attachments are also supported, as a Parameter for the Payload, however must be instantiated as a new object. Details of attachment and required fields can be found [here](https://api.slack.com/docs/message-attachments) They work in the same way as Payloads eg:
 
