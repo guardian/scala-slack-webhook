@@ -6,6 +6,8 @@ This is a scala library for pushing incoming webhooks to Slack
 
 # Installation
 
+Requires Scala 2.11
+
 Add
 
 ```scala
@@ -15,7 +17,7 @@ resolvers += "Guardian Bintray" at "https://dl.bintray.com/guardian/editorial-to
 and
 
 ```scala
-libraryDependencies += "com.gu" % "scala-slack-webhook_2.11" % "0.1.0"
+libraryDependencies += "com.gu" %% "scala-slack-webhook" % "0.1.0"
 ```
 
 to your build.sbt file
