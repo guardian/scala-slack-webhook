@@ -24,7 +24,7 @@ to your build.sbt file
 
 #Usage
 
-You must already have a created a custom incoming webhook integration for your Slack account, via https://<your account>.slack.com/apps/build/custom-integration. You will need your Webhook URL, provided by Slack
+You must already have a created a custom incoming webhook integration for your Slack account. You will need the Webhook URL for your integration, provided by Slack
 
 Then in your codebase, instantiate a new webhook:
 
