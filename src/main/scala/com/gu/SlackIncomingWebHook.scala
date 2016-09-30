@@ -1,34 +1,37 @@
 package com.gu
 
-import org.apache.http.client.methods.{CloseableHttpResponse, HttpPost}
-import org.apache.http.entity.StringEntity
-import org.apache.http.impl.client.HttpClients
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 import play.api.libs.json.{JsValue, Json}
-import scala.io.Source
+import play.api.libs.ws.WSResponse
+import play.api.libs.ws.ahc.AhcWSClient
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
 
 class SlackIncomingWebHook(url: String) extends Http {
 
-  def send(payload: Payload): HttpResponse = {
-    POST(url, Json.toJson(payload))
+  implicit val actorSystem = ActorSystem()
+  implicit val materializer = ActorMaterializer()
+
+  def send(payload: Payload): WSResponse = {
+    implicit val client = AhcWSClient()
+    val response = post(url, Json.toJson(payload))
+    client.close()
+    response
   }
 
 }
 
 trait Http {
 
-  val client = HttpClients.createDefault()
+  def post(url: String, json: JsValue)(implicit client: AhcWSClient): WSResponse = {
+    val response: Future[WSResponse] = client
+      .url(url)
+      .withHeaders("Content-type" -> "application/json")
+      .post(json)
 
-  def POST(url: String, payload: JsValue): HttpResponse = {
-    val post = new HttpPost(url)
-
-    post.setHeader("Content-type", "application/x-www-form-urlencoded")
-    post.setEntity(new StringEntity(s"payload=${payload.toString}"))
-
-    new HttpResponse(client.execute(post))
+    Await.result(response, Duration.Inf)
   }
-}
 
-class HttpResponse(val response: CloseableHttpResponse) {
-  lazy val responseCode = response.getStatusLine.getStatusCode
-  lazy val body = Source.fromInputStream(response.getEntity.getContent).getLines().mkString("")
 }
