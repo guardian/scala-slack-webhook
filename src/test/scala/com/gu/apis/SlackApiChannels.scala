@@ -48,3 +48,5 @@ case class SlackApiChannels(channel: String) {
   }
 
 }
+
+//TODO: Model slack channel api endpoint as a case class, make ws call to get JSON and extract to new instance of case class
