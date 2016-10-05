@@ -1,21 +1,33 @@
 package com.gu
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 import com.gu.apis.SlackApiChannels
 import com.gu.services.TestConfig
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
-import org.scalatest.{AsyncFlatSpec, Matchers}
+import org.scalatest.{AsyncFlatSpec, BeforeAndAfterAll, Matchers}
+import play.api.libs.ws.ahc.AhcWSClient
 
-class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
+class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually with BeforeAndAfterAll {
 
   override implicit val patienceConfig = PatienceConfig(timeout = scaled(Span(10, Seconds)), interval = scaled(Span(1, Seconds)))
 
   val config = TestConfig
-  val webhookUrl = config.testWebHookUrl
+  val slackWebHook: SlackIncomingWebHook = SlackIncomingWebHook(config.testWebHookUrl)
   val generalChannel = config.slackGeneralChannelId
   val randomChannel = config.slackRandomChannelId
+
+  implicit val actorSystem = ActorSystem()
+  implicit val materializer = ActorMaterializer()
+  implicit val client = AhcWSClient()
+
+  override def afterAll() = {
+    client.close()
+    super.afterAll()
+  }
 
   def timestamp = DateTime.now.toString(DateTimeFormat.forPattern("yyyyMMddHHmmss"))
 
@@ -23,7 +35,7 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
     val testPostText = s"Test post - text test $timestamp"
 
     for {
-      response <- new SlackIncomingWebHook(webhookUrl).send(Payload(testPostText))
+      response <- slackWebHook.send(Payload(testPostText))
     } yield {
       response.status should be (200)
       SlackApiChannels(generalChannel).latestMessageText should be (testPostText)
@@ -34,7 +46,7 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
     val testPostText = s"Test post - channel test $timestamp"
 
     for {
-      response <- new SlackIncomingWebHook(webhookUrl)
+      response <- slackWebHook
         .send(Payload(testPostText)
         .withChannel("random"))
     } yield {
@@ -48,7 +60,7 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
     val testUserName = "Test User"
 
     for {
-      response <- new SlackIncomingWebHook(webhookUrl)
+      response <- slackWebHook
         .send(Payload(s"Test post - username test $timestamp")
         .withUsername(testUserName))
     } yield {
@@ -62,7 +74,7 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
     val testIconUrl = "https://cdn3.iconfinder.com/data/icons/ikooni-outline-file-folders/128/files-03-128.png"
 
     for {
-      response <- new SlackIncomingWebHook(webhookUrl)
+      response <- slackWebHook
         .send(Payload(s"Test post -icon url test $timestamp")
         .withUsername("Icon test")
         .withIconUrl(testIconUrl))
@@ -77,7 +89,7 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
     val testIconEmoji = ":monkey_face:"
 
     for {
-      response <- new SlackIncomingWebHook(webhookUrl)
+      response <- slackWebHook
         .send(Payload(s"Test post - icon emoji test $timestamp")
         .withUsername("Emoji test")
         .withIconEmoji(":monkey_face:"))
@@ -95,7 +107,7 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
     )
 
     for {
-      response <- new SlackIncomingWebHook(webhookUrl)
+      response <- slackWebHook
         .send(Payload(s"Test post - simple attachment test $timestamp")
         .withAttachment(attachment))
     } yield {
@@ -117,7 +129,7 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
     ).withField(field)
 
     for {
-      response <- new SlackIncomingWebHook(webhookUrl)
+      response <- slackWebHook
         .send(Payload(s"Test post - field attachment test $timestamp")
         .withAttachment(attachment))
     } yield {
@@ -141,7 +153,7 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
       .withAuthorIcon("https://image.freepik.com/free-icon/male-user-shadow_318-34042.png")
 
     for {
-      response <- new SlackIncomingWebHook(webhookUrl)
+      response <- slackWebHook
         .send(Payload(s"Test post - authored attachment test $timestamp")
         .withAttachment(attachment))
     } yield {
@@ -165,7 +177,7 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
       .withThumbUrl("https://image.freepik.com/free-icon/thumb-up-sign_318-63754.jpg")
 
     for {
-      response <- new SlackIncomingWebHook(webhookUrl)
+      response <- slackWebHook
       .send(Payload(s"Test post - optional parameter attachment test $timestamp")
       .withAttachment(attachment))
     } yield {
