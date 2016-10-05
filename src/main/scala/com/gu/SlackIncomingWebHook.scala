@@ -7,18 +7,12 @@ import play.api.libs.ws.WSResponse
 import play.api.libs.ws.ahc.AhcWSClient
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
-class SlackIncomingWebHook(url: String) {
 
-  implicit val actorSystem = ActorSystem()
-  implicit val materializer = ActorMaterializer()
-
-  def send(payload: Payload): Future[WSResponse] = {
-    val client = AhcWSClient()
-    client
-     .url(url)
-     .withHeaders("Content-type" -> "application/json")
-     .post(Json.toJson(payload)) andThen { case _ => client.close() }
+object SlackIncomingWebHook {
+  def send(url: String, payload: Payload)(implicit client: AhcWSClient, actorSystem: ActorSystem, materializer: ActorMaterializer): Future[WSResponse] = {
+    client.url(url)
+      .withHeaders("Content-type" -> "application/json")
+      .post(Json.toJson(payload))
   }
 }
