@@ -100,10 +100,11 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
         .withAttachment(attachment))
     } yield {
       response.status should be (200)
-      val channelApi = SlackApiChannels(generalChannel)
-      channelApi.firstAttachmentTitle should be (attachment.title)
-      channelApi.firstAttachmentText should be (attachment.text)
-      channelApi.firstAttachmentFallback should be (attachment.fallback)
+      SlackApiChannels(generalChannel) should have (
+        'firstAttachmentTitle (attachment.title),
+        'firstAttachmentText (attachment.text),
+        'firstAttachmentFallback (attachment.fallback)
+      )
     }
   }
 
@@ -121,10 +122,11 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
         .withAttachment(attachment))
     } yield {
       response.status should be(200)
-      val channelApi = SlackApiChannels(generalChannel)
-      channelApi.firstFieldTitle should be (field.title)
-      channelApi.firstFieldValue should be (field.value)
-      channelApi.firstFieldShort should be (field.short)
+      SlackApiChannels(generalChannel) should have (
+      'firstFieldTitle (field.title),
+      'firstFieldValue (field.value),
+      'firstFieldShort (field.short)
+      )
     }
   }
 
@@ -144,10 +146,11 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
         .withAttachment(attachment))
     } yield {
       response.status should be (200)
-      val channelApi = SlackApiChannels(generalChannel)
-      channelApi.firstAttachmentAuthorName should be (attachment.author_name.get)
-      channelApi.firstAttachmentAuthorIcon should be (attachment.author_icon.get)
-      channelApi.firstAttachmentAuthorLink should be (attachment.author_link.get)
+      SlackApiChannels(generalChannel) should have (
+      'firstAttachmentAuthorName (attachment.author_name.get),
+      'firstAttachmentAuthorIcon (attachment.author_icon.get),
+      'firstAttachmentAuthorLink (attachment.author_link.get)
+      )
     }
   }
 
@@ -167,10 +170,11 @@ class IntegrationTests extends AsyncFlatSpec with Matchers with Eventually {
       .withAttachment(attachment))
     } yield {
       response.status should be (200)
-      val channelApi = SlackApiChannels(generalChannel)
-      channelApi.firstAttachmentPretext should be (attachment.pretext.get)
-      channelApi.firstAttachmentColor should be (attachment.color.get.replace("#", ""))
-      channelApi.firstAttachmentThumbUrl should be (attachment.thumb_url.get)
+      SlackApiChannels(generalChannel) should have (
+      'firstAttachmentPretext (attachment.pretext.get),
+      'firstAttachmentColor (attachment.color.get.replace("#", "")),
+      'firstAttachmentThumbUrl (attachment.thumb_url.get)
+      )
     }
   }
 }
