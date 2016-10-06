@@ -19,7 +19,7 @@ resolvers += "Guardian Bintray" at "https://dl.bintray.com/guardian/editorial-to
 and
 
 ```scala
-libraryDependencies += "com.gu" %% "scala-slack-webhook" % "0.1.0"
+libraryDependencies += "com.gu" %% "scala-slack-webhook" % "0.2.0"
 ```
 
 to your build.sbt file
