@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/guardian/scala-slack-webhook.svg?style=svg)](https://circleci.com/gh/guardian/scala-slack-webhook)
 
-This is a scala library for pushing incoming webhooks to Slack. It uses the "[WS library from the Play Framework](https://www.playframework.com/documentation/2.5.x/ScalaWS)" for http
+This is a scala library for pushing incoming webhooks to Slack. It uses the [WS library from the Play Framework](https://www.playframework.com/documentation/2.5.x/ScalaWS) for http
 
 Therefore, if you are not using the Play Framework, you will need to provide an instance of WS client and implicit actors
 
