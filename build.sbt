@@ -13,9 +13,9 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
-  "com.typesafe.play" %% "play-json" % "2.3.4",
-  "org.apache.httpcomponents" % "httpclient" % "4.3.4",
+  "org.scalatest" %% "scalatest" % "3.0.0" % "test",
+  "com.typesafe.play" %% "play-json" % "2.5.4",
+  "com.typesafe.play" %% "play-ws" % "2.5.4",
   "com.typesafe" % "config" % "1.3.0"
 )
 

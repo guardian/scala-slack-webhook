@@ -2,7 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/guardian/scala-slack-webhook.svg?style=svg)](https://circleci.com/gh/guardian/scala-slack-webhook)
 
-This is a scala library for pushing incoming webhooks to Slack
+This is a scala library for pushing incoming webhooks to Slack. It uses the "[WS library from the Play Framework](https://www.playframework.com/documentation/2.5.x/ScalaWS)" for http
+
+Therefore, if you are not using the Play Framework, you will need to provide an instance of WS client and implicit actors
 
 # Installation
 
@@ -22,6 +24,18 @@ libraryDependencies += "com.gu" %% "scala-slack-webhook" % "0.1.0"
 
 to your build.sbt file
 
+**NOTE:** If you are not using the Play Framework, you will also require:
+
+```scala
+resolvers += "typesafe-repo" at "http://repo.typesafe.com/typesafe/releases/"
+```
+
+and
+
+```scala
+libraryDependencies += "com.typesafe.play" %% "play-ws" % "2.5.4"
+```
+
 #Usage
 
 You must already have a created a custom incoming webhook integration for your Slack account. You will need the Webhook URL for your integration, provided by Slack
@@ -30,6 +44,26 @@ Then in your codebase, instantiate a new webhook:
 
 ```scala
 val slack = new SlackIncomingWebHook("<your webhook url>")
+```
+
+If you are using the Play Framework, you need to inject the WS client into your class
+
+```scala
+@Inject() (val wsClient: WSClient)
+```
+
+If you are not using the Play Framework, you will also need to instantiate the following:
+
+```scala
+implicit val actorSystem = ActorSystem()
+implicit val materializer = ActorMaterializer()
+implicit val client = AhcWSClient()
+```
+
+Also, when not using the Play Framework, when you have finished any slack posting, you will also need to cleanup the client:
+
+```scala
+client.close()
 ```
 
 Create a payload for your post:
