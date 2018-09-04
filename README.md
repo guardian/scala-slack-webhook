@@ -1,6 +1,8 @@
 #Scala Slack Webhook
 
-[ ![Download](https://api.bintray.com/packages/guardian/editorial-tools/scala-slack-webhook/images/download.svg) ](https://bintray.com/guardian/editorial-tools/scala-slack-webhook/_latestVersion) [![CircleCI](https://circleci.com/gh/guardian/scala-slack-webhook.svg?style=svg)](https://circleci.com/gh/guardian/scala-slack-webhook)
+[ ![Download](https://api.bintray.com/packages/guardian/editorial-tools/scala-slack-webhook/images/download.svg) ](https://bintray.com/guardian/editorial-tools/scala-slack-webhook/_latestVersion) 
+
+This project is now deprecated and no longer maintained.
 
 This is a scala library for pushing incoming webhooks to Slack. It uses the [WS library from the Play Framework](https://www.playframework.com/documentation/2.5.x/ScalaWS) for http
 
